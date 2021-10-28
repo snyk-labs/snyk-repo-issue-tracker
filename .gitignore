@@ -2,3 +2,6 @@
 temp
 .vscode
 *__pycache__*
+cache/*
+data/*
+output/*

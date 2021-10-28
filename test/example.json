@@ -1,0 +1,322 @@
+{
+  "attributes": {
+    "criticality": [],
+    "lifecycle": [],
+    "environment": []
+  },
+  "branch": "main",
+  "browseUrl": "https://app.snyk.io/org/sneezing-dog-inc./project/0a9f09b6-86db-48e3-a2ce-a6c8a092e749",
+  "created": "2021-03-15T11:17:54.828Z",
+  "file_path": "package.json",
+  "hostname": null,
+  "id": "0a9f09b6-86db-48e3-a2ce-a6c8a092e749",
+  "imagePlatform": "",
+  "imageTag": "0.1.0",
+  "importingUser": {
+    "id": "b7f4b234-e888-4054-8532-0d7e3a2ec690",
+    "name": "Chris Barker",
+    "username": "chris.barker",
+    "email": "chris.barker@snyk.io"
+  },
+  "isMonitored": true,
+  "issueCountsBySeverity": {
+    "low": 0,
+    "high": 1,
+    "medium": 2,
+    "critical": 0
+  },
+  "lastTestedDate": "2021-10-28T08:44:09.949Z",
+  "name": "cmbarker/example-project:package.json",
+  "org_id": "2bcac16c-650a-406a-b2b2-5c723fbd5593",
+  "origin": "bitbucket-server",
+  "owner": null,
+  "readOnly": false,
+  "relationships": {
+    "target": {
+      "data": {
+        "type": "target",
+        "id": "94ebf8a6-94ce-455e-a53d-05e58bbfb448"
+      },
+      "links": {
+        "self": "/orgs/2bcac16c-650a-406a-b2b2-5c723fbd5593/targets/94ebf8a6-94ce-455e-a53d-05e58bbfb448"
+      }
+    },
+    "importingUser": {
+      "data": {
+        "type": "user",
+        "id": "b7f4b234-e888-4054-8532-0d7e3a2ec690"
+      },
+      "links": {
+        "self": "/orgs/2bcac16c-650a-406a-b2b2-5c723fbd5593/users/b7f4b234-e888-4054-8532-0d7e3a2ec690"
+      }
+    }
+  },
+  "remediation": {
+    "pin": {},
+    "patch": {},
+    "upgrade": {
+      "axios@0.18.1": {
+        "vulns": [
+          "SNYK-JS-AXIOS-1579269",
+          "SNYK-JS-AXIOS-1038255"
+        ],
+        "upgrades": [
+          "axios@0.18.1",
+          "axios@0.18.1"
+        ],
+        "upgradeTo": "axios@0.21.3"
+      },
+      "vuetify@1.5.24": {
+        "vulns": [
+          "SNYK-JS-VUETIFY-474604"
+        ],
+        "upgrades": [
+          "vuetify@1.5.24"
+        ],
+        "upgradeTo": "vuetify@2.1.9"
+      }
+    }
+  },
+  "tags": [],
+  "target": {
+    "type": "target",
+    "id": "94ebf8a6-94ce-455e-a53d-05e58bbfb448",
+    "attributes": {
+      "isPrivate": true,
+      "origin": "bitbucket-server",
+      "displayName": "Annoying URLNAME/example-project",
+      "remoteUrl": "https://bitbucket-server.com/projects/cmbarker/repos/someproject/browse",
+      "id": 123,
+      "name": "Annoying URLNAME/example-project",
+      "repoSlug": "example-project",
+      "projectKey": "cmbarker",
+      "url": "https://bitbucket-server.com/projects/cmbarker/repos/someproject/browse"
+    },
+    "relationships": {}
+  },
+  "testFrequency": "daily",
+  "totalDependencies": 18,
+  "type": "npm",
+  "issues": [
+    {
+      "id": "SNYK-JS-AXIOS-1579269",
+      "issueType": "vuln",
+      "pkgName": "axios",
+      "pkgVersions": [
+        "0.18.1"
+      ],
+      "priorityScore": 696,
+      "priority": {
+        "score": 696,
+        "factors": [
+          {
+            "name": "exploitMaturity",
+            "description": "Proof of Concept exploit"
+          },
+          {
+            "name": "isFixable",
+            "description": "Has a fix available"
+          },
+          {
+            "name": "cvssScore",
+            "description": "CVSS 7.5"
+          }
+        ]
+      },
+      "issueData": {
+        "id": "SNYK-JS-AXIOS-1579269",
+        "title": "Regular Expression Denial of Service (ReDoS)",
+        "severity": "high",
+        "url": "https://snyk.io/vuln/SNYK-JS-AXIOS-1579269",
+        "description": "## Overview\n[axios](https://www.npmjs.com/package/axios) is a promise-based HTTP client for the browser and Node.js.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `trim` function.\r\n\r\n## PoC\r\n```\r\n// poc.js\r\n\r\nvar {trim} = require(\"axios/lib/utils\");\r\n\r\nfunction build_blank (n) {\r\nvar ret = \"1\"\r\nfor (var i = 0; i < n; i++) {\r\nret += \" \"\r\n}\r\n\r\nreturn ret + \"1\";\r\n}\r\n\r\nvar time = Date.now();\r\ntrim(build_blank(50000))\r\nvar time_cost = Date.now() - time;\r\nconsole.log(\"time_cost: \" + time_cost)\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `axios` to version 0.21.3 or higher.\n## References\n- [GitHub Commit](https://github.com/axios/axios/commit/5b457116e31db0e88fede6c428e969e87f290929)\n",
+        "identifiers": {
+          "CVE": [
+            "CVE-2021-3749"
+          ],
+          "CWE": [
+            "CWE-400"
+          ]
+        },
+        "credit": [
+          "ready-research"
+        ],
+        "exploitMaturity": "proof-of-concept",
+        "semver": {
+          "vulnerable": [
+            "<0.21.3"
+          ]
+        },
+        "publicationTime": "2021-09-01T16:08:42.935317Z",
+        "disclosureTime": "2021-09-01T10:17:45Z",
+        "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P",
+        "cvssScore": 7.5,
+        "functions": [],
+        "language": "js",
+        "patches": [],
+        "nearestFixedInVersion": "",
+        "isMaliciousPackage": false
+      },
+      "isPatched": false,
+      "isIgnored": false,
+      "fixInfo": {
+        "isUpgradable": true,
+        "isPinnable": false,
+        "isPatchable": false,
+        "isFixable": true,
+        "isPartiallyFixable": true,
+        "nearestFixedInVersion": "",
+        "fixedIn": [
+          "0.21.3"
+        ]
+      }
+    },
+    {
+      "id": "SNYK-JS-AXIOS-1038255",
+      "issueType": "vuln",
+      "pkgName": "axios",
+      "pkgVersions": [
+        "0.18.1"
+      ],
+      "priorityScore": 616,
+      "priority": {
+        "score": 616,
+        "factors": [
+          {
+            "name": "exploitMaturity",
+            "description": "Proof of Concept exploit"
+          },
+          {
+            "name": "isFixable",
+            "description": "Has a fix available"
+          },
+          {
+            "name": "cvssScore",
+            "description": "CVSS 5.9"
+          }
+        ]
+      },
+      "issueData": {
+        "id": "SNYK-JS-AXIOS-1038255",
+        "title": "Server-Side Request Forgery (SSRF)",
+        "severity": "medium",
+        "url": "https://snyk.io/vuln/SNYK-JS-AXIOS-1038255",
+        "description": "## Overview\n[axios](https://www.npmjs.com/package/axios) is a promise-based HTTP client for the browser and Node.js.\n\nAffected versions of this package are vulnerable to Server-Side Request Forgery (SSRF). An attacker is able to bypass a proxy by providing a URL that responds with a redirect to a restricted host or IP address.\n## Remediation\nUpgrade `axios` to version 0.21.1 or higher.\n## References\n- [GitHub Commit](https://github.com/axios/axios/commit/c7329fefc890050edd51e40e469a154d0117fc55)\n- [GitHub Issue](https://github.com/axios/axios/issues/3369)\n- [GitHub Security Advisory](https://github.com/advisories/GHSA-4w2v-q235-vp99)\n- [NPM Advisory](https://www.npmjs.com/advisories/1594)\n",
+        "identifiers": {
+          "CVE": [
+            "CVE-2020-28168"
+          ],
+          "CWE": [
+            "CWE-918"
+          ],
+          "NSP": [
+            "NSP-1594"
+          ],
+          "GHSA": [
+            "GHSA-4w2v-q235-vp99"
+          ]
+        },
+        "credit": [
+          "Dima Ryskin"
+        ],
+        "exploitMaturity": "proof-of-concept",
+        "semver": {
+          "vulnerable": [
+            "<0.21.1"
+          ]
+        },
+        "publicationTime": "2020-11-08T15:07:03Z",
+        "disclosureTime": "2020-11-06T09:16:00Z",
+        "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N/E:P",
+        "cvssScore": 5.9,
+        "functions": [],
+        "language": "js",
+        "patches": [],
+        "nearestFixedInVersion": "",
+        "isMaliciousPackage": false
+      },
+      "isPatched": false,
+      "isIgnored": false,
+      "fixInfo": {
+        "isUpgradable": true,
+        "isPinnable": false,
+        "isPatchable": false,
+        "isFixable": true,
+        "isPartiallyFixable": true,
+        "nearestFixedInVersion": "",
+        "fixedIn": [
+          "0.21.1"
+        ]
+      }
+    },
+    {
+      "id": "SNYK-JS-VUETIFY-474604",
+      "issueType": "vuln",
+      "pkgName": "vuetify",
+      "pkgVersions": [
+        "1.5.24"
+      ],
+      "priorityScore": 550,
+      "priority": {
+        "score": 550,
+        "factors": [
+          {
+            "name": "exploitMaturity",
+            "description": ""
+          },
+          {
+            "name": "isFixable",
+            "description": "Has a fix available"
+          },
+          {
+            "name": "cvssScore",
+            "description": "CVSS 6.5"
+          }
+        ]
+      },
+      "issueData": {
+        "id": "SNYK-JS-VUETIFY-474604",
+        "title": "Cross-site Scripting (XSS)",
+        "severity": "medium",
+        "url": "https://snyk.io/vuln/SNYK-JS-VUETIFY-474604",
+        "description": "## Overview\n[vuetify](https://vuetifyjs.com/en/) is an a Material Design component framework for Vue.js.\n\nAffected versions of this package are vulnerable to Cross-site Scripting (XSS) via the `:error-messages` array. Note: If you are not using HTML for the props rules, messages, hint, success-messages or error-messages, you are not affected by this issue.\n## Details\n\nA cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.\n\nThis is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser’s Same Origin Policy.\n\nInjecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.\n\nEscaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, `<` can be coded as  `&lt`; and `>` can be coded as `&gt`; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses `<` and `>` as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they’ve been correctly escaped in the application code and in this way the attempted attack is diverted.\n \nThe most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware. \n\n### Types of attacks\nThere are a few methods by which XSS can be manipulated:\n\n|Type|Origin|Description|\n|--|--|--|\n|**Stored**|Server|The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.|\n|**Reflected**|Server|The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user’s browser.| \n|**DOM-based**|Client|The attacker forces the user’s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.|\n|**Mutated**| |The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.|\n\n### Affected environments\nThe following environments are susceptible to an XSS attack:\n\n* Web servers\n* Application servers\n* Web application environments\n\n### How to prevent\nThis section describes the top best practices designed to specifically protect your code: \n\n* Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches. \n* Convert special characters such as `?`, `&`, `/`, `<`, `>` and spaces to their respective HTML or URL encoded equivalents. \n* Give users the option to disable client-side scripts.\n* Redirect invalid requests.\n* Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.\n* Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.\n* Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.\n\n## Remediation\nUpgrade `vuetify` to version 2.1.9 or higher.\n## References\n- [CodePen PoC](https://codepen.io/SingleCore/pen/NWWvpaM)\n- [GitHub Commit](https://github.com/vuetifyjs/vuetify/commit/c0a81f193743df261905a214de037ed1d183d9e4)\n- [GitHub Issue](https://github.com/vuetifyjs/vuetify/issues/9491)\n",
+        "identifiers": {
+          "CVE": [],
+          "CWE": [
+            "CWE-79"
+          ]
+        },
+        "credit": [
+          "MathiasDeWeerdt"
+        ],
+        "exploitMaturity": "no-known-exploit",
+        "semver": {
+          "vulnerable": [
+            "<2.1.9"
+          ]
+        },
+        "publicationTime": "2019-10-29T11:43:11Z",
+        "disclosureTime": "2019-10-28T16:36:32Z",
+        "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N/E:U/RL:O/RC:C",
+        "cvssScore": 6.5,
+        "functions": [],
+        "language": "js",
+        "patches": [],
+        "nearestFixedInVersion": "",
+        "isMaliciousPackage": false
+      },
+      "isPatched": false,
+      "isIgnored": false,
+      "fixInfo": {
+        "isUpgradable": true,
+        "isPinnable": false,
+        "isPatchable": false,
+        "isFixable": true,
+        "isPartiallyFixable": true,
+        "nearestFixedInVersion": "",
+        "fixedIn": [
+          "2.1.9"
+        ]
+      }
+    }
+  ]
+}

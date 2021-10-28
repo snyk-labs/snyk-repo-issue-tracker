@@ -181,6 +181,8 @@ def map_projects_targets(
         
         
         target = project['relationships']['target']['data']['id']
+        file_path = project['name'].split(':')[1]
+        project['file_path'] = file_path
         
         if target in targets.keys():
             project['target'] = targets[target]
@@ -237,7 +239,11 @@ def load_project_issues(project,client):
     
     data = {'includeDescription': True}
 
-    issue_resp = client.post(f'org/{org_id}/project/{id}/aggregated-issues',data).json()
+    try:
+        issue_resp = client.post(f'org/{org_id}/project/{id}/aggregated-issues',data).json()
+    except SnykHTTPError as e:
+        print(f"org/{org_id}/project/{id}/aggregated-issues lookup failed with {e}")
+        issue_resp = {'issues':[]}
 
     change = compare_issues(issue_resp['issues'],old_issues)
     

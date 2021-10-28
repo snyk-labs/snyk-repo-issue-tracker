@@ -50,5 +50,5 @@ export SNYK_REPO_UPDATE_PROJECTS=true
 
 Or if the projects are stable, one can disable that also. Note: both of these tasks generate and populate the cache directory, if that cache directory is reset, then this script will need to be run again with UPDATE_MAP and UPDATE_PROJECTS enabled.
 
-
+Refer to [this example](test/example.json) for a project file with issues present along with target data.
 
