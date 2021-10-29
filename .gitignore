@@ -5,3 +5,4 @@ temp
 cache/*
 data/*
 output/*
+*.DS_Store*
