@@ -1,11 +1,11 @@
 import json
 import time
 
-from os import environ
+from os import environ, path
 from snyk import SnykClient
 
 from datetime import datetime, timedelta
-from util import write_project, get_orgs, get_group_targets, map_projects_targets, load_org_cache, build_map, load_map, load_projects_targets, load_project_issues
+from util import cache_orgs_metadata, write_project, get_orgs, get_group_targets, map_projects_targets, load_org_cache, build_map, load_map, load_projects_targets, load_project_issues
 
 V3_VERS = "2021-08-20~beta"
 USER_AGENT = "pysnyk/snyk_services/target_sync"
@@ -32,6 +32,11 @@ if 'SNYK_REPO_OUTPUT' in environ:
 else:
     output_dir = 'output'
 
+if 'SNYK_REPO_UPDATE_ORGS' in environ:
+    update_orgs = environ['SNYK_REPO_UPDATE_ORGS'] in TRUTHY
+else:
+    update_orgs = False
+
 if 'SNYK_REPO_UPDATE_MAP' in environ:
     update_map = environ['SNYK_REPO_UPDATE_MAP'] in TRUTHY
 else:
@@ -49,10 +54,17 @@ v1 = SnykClient(
     tries=2)
 
 
-all_orgs_group = get_orgs(group, v1)
-
-orgs = all_orgs_group['orgs']
-
+if update_orgs:
+    print('Updating Org Metadata')
+    orgs = get_orgs(group, v1)
+    cache_orgs_metadata(orgs,cache_dir)
+elif path.isfile(f"{cache_dir}/org/metadata.json") is not True:
+    print('No cache present, retrieving Org Metadata')
+    orgs = get_orgs(group, v1)
+    cache_orgs_metadata(orgs,cache_dir)
+else:
+    print('Using cached Org Metadata')
+    orgs = load_org_cache(cache_dir)
 
 if update_map:
     print('Generating new map of Target data')
@@ -69,14 +81,13 @@ if update_projects:
 
 
 print('Checking for changes to issues in all cached orgs/projects')
-cached_orgs = load_org_cache(cache_dir)
 
-for org in cached_orgs:
+for org in orgs:
     projects = load_projects_targets(cache_dir,org)
 
     for project in projects:
         id = project['id']
-        org_id = project['org_id']
+        org_id = project['org_slug']
         projects_cache_file = f"{cache_dir}/org/{org_id}/project/{id}.json"
 
         changes, new_issues, old_issues = load_project_issues(project,v1)

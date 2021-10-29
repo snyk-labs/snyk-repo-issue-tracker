@@ -27,7 +27,7 @@ def v3_get(endpoint, token, delay=1):
 
 # we need a function to generate the orgs in the cache_path/org/org_id
 def gen_org_path(cache,org):
-    org_id = org['id']
+    org_id = org['slug']
     if path.isdir(f"{cache}/org") is not True:
         mkdir(f"{cache}/org")
     if path.isdir(f"{cache}/org/{org_id}") is not True:
@@ -44,7 +44,7 @@ def gen_org_path(cache,org):
 # this is a 'safe' way to get all orgs in a group because not all tokens can use user/me
 def get_orgs(snyk_group: str, client: SnykClient) -> list:
     
-    first_resp = client.get(f'group/{snyk_group}/orgs?page=1&perPage=100')
+    first_resp = client.get(f'group/{snyk_group}/orgs?page=1&perPage=200')
     orgs_resp = first_resp.json()
     
     all_pages = list()
@@ -52,17 +52,17 @@ def get_orgs(snyk_group: str, client: SnykClient) -> list:
     next_page = 2
 
     while 'next' in first_resp.links:
-        first_resp = client.get(f'group/{snyk_group}/orgs?page={next_page}&perPage=100')
+        first_resp = client.get(f'group/{snyk_group}/orgs?page={next_page}&perPage=200')
         all_pages.extend(first_resp.json()['orgs'])
         next_page+=1
     
     orgs_resp['orgs'] = all_pages
     
-    return orgs_resp
+    return orgs_resp['orgs']
 
 def get_org_targets(org: dict, token: str) -> list:
 
-    print(f"getting {org['id']}")
+    print(f"getting {org['id']} / {org['slug']} targets")
     targets_raw = v3_get(f"orgs/{org['id']}/targets?version={V3_VERS}", token)
 
     targets_resp = targets_raw.json()
@@ -83,6 +83,8 @@ def get_group_targets(orgs: list, token: str) -> dict:
 
 
 def get_org_projects(org: dict, token: str) -> dict:
+
+    print(f"getting {org['id']} / {org['slug']} projects")
     
     try:
         first_resp = v3_get(f"orgs/{org['id']}/projects?version={V3_VERS}",token)
@@ -91,7 +93,6 @@ def get_org_projects(org: dict, token: str) -> dict:
         orgs_resp = {'data':[]}
         return orgs_resp
 
-    print(first_resp)
     orgs_resp = first_resp.json()
     
     all_pages = list()
@@ -170,19 +171,21 @@ def map_projects_targets(
     projects = get_org_projects(org,token)
 
     for project in projects['data']:
-        url = f'org/{org["id"]}/project/{project["id"]}'
-        try:
-            p_resp = client.get(url).json()
-        except SnykHTTPError as e:
-            print(f'project {project["id"]} lookup failed with {e}')
-            continue
-        project.update(p_resp)
+
+        # we want to bump the attributes to become top level keys
+        project.update(project.pop('attributes'))
+        
         project['org_id'] = org["id"]
-        
-        
+        project['org_slug'] = org["slug"]
+
+        project['browseUrl'] = f"https://app.snyk.io/org/{org['slug']}/project/{project['id']}"
+
         target = project['relationships']['target']['data']['id']
-        file_path = project['name'].split(':')[1]
-        project['file_path'] = file_path
+        file_paths = project['name'].split(':')
+        if len(file_paths) == 2:
+            project['targetObjectPath'] = file_paths[1]
+        else:
+            project['targetObjectPath'] = ''
         
         if target in targets.keys():
             project['target'] = targets[target]
@@ -196,7 +199,6 @@ def map_projects_targets(
         if 'issues' in old_project.keys():
             project['issues'] = old_project['issues']
         
-        
         p2={}
         for i in sorted(project):
             p2[i]=project[i]
@@ -206,16 +208,17 @@ def map_projects_targets(
 
 
 def load_org_cache(cache_dir):
-    orgs = []
-    for entry in scandir(f'{cache_dir}/org'):
-        if not entry.name.startswith('.') and entry.is_dir():
-            orgs.append({'id':entry.name})
     
+    file_path = f"{cache_dir}/org/metadata.json"
+
+    with open(file_path) as f:
+        orgs = json.load(f)
+
     return orgs
 
 def load_projects_targets(cache_dir, org):
 
-    org_id = org['id']
+    org_id = org['slug']
 
     projects_path = f"{cache_dir}/org/{org_id}/project"
 
@@ -282,3 +285,12 @@ def write_project(file_path,project):
     with open(file_path,mode='w',encoding='utf-8') as f:
         json.dump(project, f, ensure_ascii=False, indent=2)
 
+def cache_orgs_metadata(orgs,cache):
+    
+    if path.isdir(f"{cache}/org") is not True:
+        mkdir(f"{cache}/org")
+    
+    file_path = f"{cache}/org/metadata.json"
+
+    with open(file_path,mode='w',encoding='utf-8') as f:
+        json.dump(orgs, f, ensure_ascii=False, indent=2)

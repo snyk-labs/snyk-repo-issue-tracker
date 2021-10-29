@@ -50,5 +50,19 @@ export SNYK_REPO_UPDATE_PROJECTS=true
 
 Or if the projects are stable, one can disable that also. Note: both of these tasks generate and populate the cache directory, if that cache directory is reset, then this script will need to be run again with UPDATE_MAP and UPDATE_PROJECTS enabled.
 
+### Formatting
+
+The payload is as minimally modified from a Snyk API response as possible, for convienence the attributes hash has been flatten. Other modifications:
+
+```
+org_id = Org's public uuid
+org_slug = Org's public 'shortname' - used for URLS
+targetObjectPath = path to the file being scanned, this is derived from the project name currently
+```
+
+References:
+For SCM (bitbucket, github) dependecy checking, `targetReference` is the branch name (this was branch is previous v1 projects api)
+
+
 Refer to [this example](test/example.json) for a project file with issues present along with target data.
 
