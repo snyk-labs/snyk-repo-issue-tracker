@@ -1,36 +1,15 @@
 {
-  "attributes": {
-    "criticality": [],
-    "lifecycle": [],
-    "environment": []
-  },
-  "branch": "main",
   "browseUrl": "https://app.snyk.io/org/sneezing-dog-inc./project/0a9f09b6-86db-48e3-a2ce-a6c8a092e749",
+  "businessCriticality": [],
   "created": "2021-03-15T11:17:54.828Z",
+  "environment": [],
   "file_path": "package.json",
-  "hostname": null,
   "id": "0a9f09b6-86db-48e3-a2ce-a6c8a092e749",
-  "imagePlatform": "",
-  "imageTag": "0.1.0",
-  "importingUser": {
-    "id": "b7f4b234-e888-4054-8532-0d7e3a2ec690",
-    "name": "Chris Barker",
-    "username": "chris.barker",
-    "email": "chris.barker@snyk.io"
-  },
-  "isMonitored": true,
-  "issueCountsBySeverity": {
-    "low": 0,
-    "high": 1,
-    "medium": 2,
-    "critical": 0
-  },
-  "lastTestedDate": "2021-10-28T08:44:09.949Z",
+  "lifecycle": [],
   "name": "cmbarker/example-project:package.json",
   "org_id": "2bcac16c-650a-406a-b2b2-5c723fbd5593",
-  "origin": "bitbucket-server",
-  "owner": null,
-  "readOnly": false,
+  "org_slug": "sneezing-dog-inc.",
+  "origin": "bitbucket-cloud",
   "relationships": {
     "target": {
       "data": {
@@ -51,32 +30,7 @@
       }
     }
   },
-  "remediation": {
-    "pin": {},
-    "patch": {},
-    "upgrade": {
-      "axios@0.18.1": {
-        "vulns": [
-          "SNYK-JS-AXIOS-1579269",
-          "SNYK-JS-AXIOS-1038255"
-        ],
-        "upgrades": [
-          "axios@0.18.1",
-          "axios@0.18.1"
-        ],
-        "upgradeTo": "axios@0.21.3"
-      },
-      "vuetify@1.5.24": {
-        "vulns": [
-          "SNYK-JS-VUETIFY-474604"
-        ],
-        "upgrades": [
-          "vuetify@1.5.24"
-        ],
-        "upgradeTo": "vuetify@2.1.9"
-      }
-    }
-  },
+  "status": "active",
   "tags": [],
   "target": {
     "type": "target",
@@ -94,8 +48,7 @@
     },
     "relationships": {}
   },
-  "testFrequency": "daily",
-  "totalDependencies": 18,
+  "targetReference": "main",
   "type": "npm",
   "issues": [
     {

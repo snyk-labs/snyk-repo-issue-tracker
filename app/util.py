@@ -183,9 +183,9 @@ def map_projects_targets(
         target = project['relationships']['target']['data']['id']
         file_paths = project['name'].split(':')
         if len(file_paths) == 2:
-            project['file_path'] = file_paths[1]
+            project['targetObjectPath'] = file_paths[1]
         else:
-            project['file_path'] = ''
+            project['targetObjectPath'] = ''
         
         if target in targets.keys():
             project['target'] = targets[target]
