@@ -36,6 +36,7 @@ The snyk group is what defines the scope of where to pull issues from
 
 For the first execution of the script, one needs to build the cache of projects and the map of targets:
 ```
+export SNYK_REPO_UPDATE_ORGS=true
 export SNYK_REPO_UPDATE_MAP=true
 export SNYK_REPO_UPDATE_PROJECTS=true
 
