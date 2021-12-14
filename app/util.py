@@ -55,7 +55,7 @@ def gen_org_path(cache, org):
 # this is a 'safe' way to get all orgs in a group because not all tokens can use user/me
 def get_orgs(snyk_group: str, client: SnykClient) -> list:
 
-    first_resp = client.get(f"group/{snyk_group}/orgs?page=1&perPage=200")
+    first_resp = client.get(f"group/{snyk_group}/orgs?page=1&perPage=100")
     orgs_resp = first_resp.json()
 
     all_pages = list()
@@ -63,7 +63,7 @@ def get_orgs(snyk_group: str, client: SnykClient) -> list:
     next_page = 2
 
     while "next" in first_resp.links:
-        first_resp = client.get(f"group/{snyk_group}/orgs?page={next_page}&perPage=200")
+        first_resp = client.get(f"group/{snyk_group}/orgs?page={next_page}&perPage=100")
         all_pages.extend(first_resp.json()["orgs"])
         next_page += 1
 
@@ -107,6 +107,7 @@ def get_org_projects(org: dict, token: str) -> dict:
     params = {}
 
     params["limit"] = 100
+    params["origin"] = "bitbucket-server"
 
     org_projects = v3client.get_all_pages(f"orgs/{org['id']}/projects", params)
 
@@ -248,7 +249,7 @@ def load_project_issues(project, client):
     else:
         old_issues = []
 
-    data = {"includeDescription": True}
+    data = {"includeDescription": False}
 
     try:
         issue_resp = client.post(
