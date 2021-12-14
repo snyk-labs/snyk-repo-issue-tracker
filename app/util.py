@@ -74,12 +74,15 @@ def get_orgs(snyk_group: str, client: SnykClient) -> list:
 
 def get_org_targets(org: dict, token: str) -> list:
 
+    v3client = SnykV3Client(token)
+
     print(f"getting {org['id']} / {org['slug']} targets")
-    targets_raw = v3_get(f"orgs/{org['id']}/targets?version={V3_VERS}", token)
 
-    targets_resp = targets_raw.json()
+    params = {}
 
-    targets = targets_resp["data"]
+    params["limit"] = 100
+
+    targets = v3client.get_all_pages(f"orgs/{org['id']}/targets", params)
 
     return targets
 
@@ -101,42 +104,13 @@ def get_org_projects(org: dict, token: str) -> dict:
 
     print(f"getting {org['id']} / {org['slug']} projects")
 
-    try:
-        first_resp = v3_get(f"orgs/{org['id']}/projects?version={V3_VERS}", token)
-    except Exception as e:
-        print(f"{org['id']} project lookup failed with {e}")
-        orgs_resp = {"data": []}
-        return orgs_resp
+    params = {}
 
-    try:
-        orgs_resp = first_resp.json()
-    except Exception as e:
-        print(f"{org['id']} returned invalid json {e}")
-        print(f"headers:{first_resp.headers}")
-        print(f"body:{first_resp.text}")
-        orgs_resp = {"data": []}
-        return orgs_resp
+    params["limit"] = 100
 
-    all_pages = list()
-    all_pages.extend(orgs_resp["data"])
+    org_projects = v3client.get_all_pages(f"orgs/{org['id']}/projects", params)
 
-    while "next" in page["links"].keys():
-        next_url = urllib.parse.urlsplit(page["links"]["next"])
-        query = urllib.parse.parse_qs(next_url.query)
-
-        params = {}
-
-        for k, v in query.items():
-            params[k] = v
-
-        params["limit"] = 200
-
-        page = self.get(next_url.path, params).json()
-        data.extend(page["data"])
-
-    orgs_resp["data"] = all_pages
-
-    return orgs_resp
+    return org_projects
 
 
 def build_map(targets, data_dir):
@@ -201,7 +175,7 @@ def map_projects_targets(
 
     projects = get_org_projects(org, token)
 
-    for project in projects["data"]:
+    for project in projects:
 
         # we want to bump the attributes to become top level keys
         project.update(project.pop("attributes"))
@@ -334,7 +308,7 @@ def cache_orgs_metadata(orgs, cache):
 class SnykV3Client(object):
     API_URL = "https://api.snyk.io/v3"
     V3_VERS = "2021-08-20~beta"
-    USER_AGENT = f"pysnyk/snyk_services/sync/{__version__}"
+    USER_AGENT = f"pysnyk/snyk_services/issues/0.0.1"
 
     def __init__(
         self,
